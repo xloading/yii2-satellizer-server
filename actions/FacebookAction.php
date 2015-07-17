@@ -2,12 +2,20 @@
 
 namespace wfcreations\satellizer\actions;
 
+use Yii;
+use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
 use yii\base\Action;
+use wfcreations\satellizer\Satellizer;
+use wfcreations\satellizer\models\User;
 
 class FacebookAction extends Action {
 
     public function run() {
+
         if (Yii::$app->getRequest()->isPost) {
+            $user_class = Satellizer::getComponent()->identityClass;
+
             $accessTokenUrl = 'https://graph.facebook.com/v2.3/oauth/access_token';
             $graphApiUrl = 'https://graph.facebook.com/v2.3/me';
 
@@ -24,34 +32,35 @@ class FacebookAction extends Action {
             $profile = $cliente->get($graphApiUrl, ['query' => $accessToken])->json();
 
             if (Yii::$app->getRequest()->getHeaders()->get('Authorization')) {
-                $advertiser = \common\models\ar\Advertiser::findOne(['facebook' => $profile['id']]);
+                $user = $user_class::findOne(['facebook' => $profile['id']]);
 
-                if ($advertiser) {
+                if ($user) {
                     throw new \yii\web\ConflictHttpException('There is already a Facebook account that belongs to you', 409);
                 }
 
                 $token = explode(' ', Yii::$app->getRequest()->getHeaders()->getHeaders()->get('Authorization'))[1];
                 $payload = (array) JWT::decode($token, '123456789', ['HS256']);
 
-                $advertiser = \common\models\ar\Advertiser::find($payload['sub']);
-                $advertiser->facebook = $profile['id'];
+                $user = $user_class::find($payload['sub']);
+                $user->facebook = $profile['id'];
+
                 //
-                $advertiser->save();
+                $user->save();
 
-                return ['token' => $this->createToken($advertiser)];
+                return ['token' => $this->createToken($user)];
             } else {
-                $advertiser = \common\models\ar\Advertiser::findOne(['facebook' => $profile['id']]);
+                $user = $user_class::findOne(['facebook' => $profile['id']]);
 
-                if ($advertiser) {
-                    return ['token' => $this->createToken($advertiser)];
+                if ($user) {
+                    return ['token' => $this->createToken($user)];
                 }
 
-                $advertiser = new \common\models\ar\Advertiser();
-                $advertiser->email = $profile['email'];
-                $advertiser->facebook = $profile['id'];
-                $advertiser->save();
+                $user = Yii::createObject($user_class);
+                $user->email = $profile['email'];
+                $user->facebook = $profile['id'];
+                $user->save();
 
-                return ['token' => $this->createToken($advertiser)];
+                return ['token' => $this->createToken($user)];
             }
         }
     }
