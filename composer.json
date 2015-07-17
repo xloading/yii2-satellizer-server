@@ -1,0 +1,35 @@
+{
+    "name": "wfcreations/yii2-satellizer-server",
+    "description": "Yii2 Satellizer server",
+    "keywords": [
+        "yii2",
+        "satellizer",
+        "social",
+        "authentication",
+        "server"
+    ],
+    "type": "yii2-extension",
+    "license": "BSD",
+    "support": {
+        "issues": "https://github.com/wfcreations/yii2-satellizer-server/issues",
+        "wiki": "https://github.com/wfcreations/yii2-satellizer-server/wiki",
+        "source": "https://github.com/wfcreations/yii2-satellizer-server"
+    },
+    "authors": [
+        {
+            "name": "Welsiton Ferreira",
+            "email": "wfcreations@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "guzzlehttp/guzzle": "4.2.1",
+        "firebase/php-jwt": "dev-master",
+        "guzzlehttp/oauth-subscriber": "0.1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "wfcreations\\satellizer\\": ""
+        }
+    }
+}
