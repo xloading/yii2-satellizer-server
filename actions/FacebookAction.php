@@ -3,24 +3,18 @@
 namespace wfcreations\satellizer\actions;
 
 use Yii;
-use Firebase\JWT\JWT;
-use GuzzleHttp\Client;
 use yii\base\Action;
+use GuzzleHttp\Client;
 use wfcreations\satellizer\Satellizer;
 
 class FacebookAction extends Action {
 
-    protected function createToken($user) {
-        $payload = [
-            'sub' => $user->id,
-            'iat' => time(),
-            'exp' => time() + (2 * 7 * 24 * 60 * 60)
-        ];
-        return JWT::encode($payload, Config::get('app.token_secret'));
-    }
-
     public function run() {
         if (Yii::$app->getRequest()->isPost) {
+            Yii::$app->getRequest()->parsers = [
+                'application/json' => 'yii\web\JsonParser',
+            ];
+
             $user_class = Satellizer::getComponent()->identityClass;
 
             $params = [
@@ -43,29 +37,24 @@ class FacebookAction extends Action {
                 }
 
                 $token = explode(' ', Yii::$app->getRequest()->getHeaders()->getHeaders()->get('Authorization'))[1];
-                $payload = (array) JWT::decode($token, Satellizer::getComponent()->jwtKey, ['HS256']);
+                $payload = (array) Satellizer::getComponent()->decodeToken($token);
 
                 $user = $user_class::find($payload['sub']);
-                $user->facebook = $profile['id'];
-
-                //
+                $user->facebookLink($profile);
                 $user->save();
-
-                return ['token' => $this->createToken($user)];
             } else {
                 $user = $user_class::findOne(['facebook' => $profile['id']]);
 
                 if ($user) {
-                    return ['token' => $this->createToken($user)];
+                    return ['token' => Satellizer::getComponent()->createToken($user)];
                 }
 
                 $user = Yii::createObject($user_class);
-                $user->email = $profile['email'];
-                $user->facebook = $profile['id'];
+                $user->facebookLink($profile);
                 $user->save();
-
-                return ['token' => $this->createToken($user)];
             }
+
+            return ['token' => Satellizer::getComponent()->createToken($user)];
         }
     }
 

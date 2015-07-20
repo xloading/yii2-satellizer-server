@@ -4,6 +4,7 @@ namespace wfcreations\satellizer;
 
 use Yii;
 use yii\base\Component;
+use Firebase\JWT\JWT;
 
 class Satellizer extends Component {
 
@@ -95,6 +96,19 @@ class Satellizer extends Component {
         if (!isset($this->github['userApiUrl'])) {
             $this->github['userApiUrl'] = 'https://api.github.com/user';
         }
+    }
+
+    public function createToken($user) {
+        $payload = [
+            'sub' => $user->id,
+            'iat' => time(),
+            'exp' => time() + $this->tokenLifetime,
+        ];
+        return JWT::encode($payload, $this->jwtKey);
+    }
+
+    public function decodeToken($jwt) {
+        return JWT::decode($jwt, $this->jwtKey, ['HS256']);
     }
 
 }

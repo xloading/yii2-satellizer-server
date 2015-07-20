@@ -68,4 +68,8 @@ class User extends \yii\db\ActiveRecord {
         ];
     }
 
+    public function facebookLink($profile) {
+        $this->facebook = $profile['id'];
+    }
+
 }
