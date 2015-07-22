@@ -109,4 +109,4 @@ Provider supported
 
 
 
-For more information about yii2 api see [yii2-app-api](https://github.com/wfcreations/yii2-app-api) and [Guide rest - Qick-start](http://www.yiiframework.com/doc-2.0/guide-rest-quick-start.html)
+For more information about yii2 api see [Guide rest - Quick-start](http://www.yiiframework.com/doc-2.0/guide-rest-quick-start.html) and [yii2-app-api](https://github.com/wfcreations/yii2-app-api).
