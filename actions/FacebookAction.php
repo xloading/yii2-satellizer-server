@@ -40,8 +40,9 @@ class FacebookAction extends Action {
                 $payload = (array) Satellizer::getComponent()->decodeToken($token);
 
                 $user = $user_class::find($payload['sub']);
-                $user->facebookLink($profile);
+                $this->facebook = $profile['id'];
                 $user->save();
+                $user->facebookLink($profile);
             } else {
                 $user = $user_class::findOne(['facebook' => $profile['id']]);
 
@@ -50,8 +51,9 @@ class FacebookAction extends Action {
                 }
 
                 $user = Yii::createObject($user_class);
-                $user->facebookLink($profile);
+                $this->facebook = $profile['id'];
                 $user->save();
+                $user->facebookLink($profile);
             }
 
             return ['token' => Satellizer::getComponent()->createToken($user)];

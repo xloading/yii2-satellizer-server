@@ -2,6 +2,10 @@
 
 namespace wfcreations\satellizer\models;
 
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+use wfcreations\satellizer\Satellizer;
+
 /**
  * This is the model class for table "user".
  *
@@ -21,7 +25,7 @@ namespace wfcreations\satellizer\models;
  *
  * @property UserProfile $userProfile
  */
-class User extends \yii\db\ActiveRecord {
+class User extends ActiveRecord implements IdentityInterface {
 
     /**
      * @inheritdoc
@@ -69,7 +73,28 @@ class User extends \yii\db\ActiveRecord {
     }
 
     public function facebookLink($profile) {
-        $this->facebook = $profile['id'];
+        
+    }
+
+    public function getAuthKey() {
+        return null;
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function validateAuthKey($authKey) {
+        return false;
+    }
+
+    public static function findIdentity($id) {
+        return static::findOne(['id' => $id]);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null) {
+        $payload = (array) Satellizer::getComponent()->decodeToken($token);
+        return static::findIdentity($payload['sub']);
     }
 
 }
