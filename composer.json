@@ -24,7 +24,7 @@
     "require": {
         "yiisoft/yii2": "*",
         "guzzlehttp/guzzle": "4.2.1",
-        "firebase/php-jwt": "dev-master",
+        "firebase/php-jwt": "4.0.0",
         "guzzlehttp/oauth-subscriber": "0.1.2"
     },
     "autoload": {
