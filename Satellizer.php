@@ -10,7 +10,7 @@ class Satellizer extends Component {
 
     public static $componentName = 'satellizer';
     public $identityClass = '\wfcreations\satellizer\models\User';
-    public $tokenLifetime = 2 * 7 * 24 * 60 * 60;
+    public $tokenLifetime = 1209600;
     public $jwtKey;
     public $facebook = [
     ];
