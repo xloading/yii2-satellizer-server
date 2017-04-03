@@ -23,7 +23,7 @@
     ],
     "require": {
         "yiisoft/yii2": "*",
-        "guzzlehttp/guzzle": "4.2.1",
+        "guzzlehttp/guzzle": "~6.0",
         "firebase/php-jwt": "4.0.0",
         "guzzlehttp/oauth-subscriber": "0.1.2"
     },
